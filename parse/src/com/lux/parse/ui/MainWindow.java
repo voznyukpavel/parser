@@ -2,6 +2,8 @@ package com.lux.parse.ui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.FillLayout;
@@ -15,174 +17,229 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class MainWindow {
-	private static final String CLEAN = "Clean";
-	private static final String CHANGE = "Change";
-	private static final String SAVE = "Save";
-	private static final String LOAD = "Load";
-	private static final String NEXT = "Next";
-	private static final String NEXT_FILE = "Next file";
+    private static final String FILE_SEPARATOR = "<<<NEXT_FILE>>>";
+    private static final String EXPRESSION_SEPARATOR = "<<<NEXT>>>";
 
-	private static final String FILES_LIST = "Files list:";
-	private static final String PATH = "Repo path:";
-	private static final String FROM = "From:";
-	private static final String TO = "To:";
+    private static final String CLEAN = "Clean";
+    private static final String CHANGE = "Change";
+    private static final String SAVE = "Save";
+    private static final String LOAD = "Load";
+    private static final String NEXT = "Next";
+    private static final String NEXT_FILE = "Next file";
 
-	private static final String NAME = "Parse";
-	private static final int MIN_WINDOW_HEIGHT = 430;
-	private static final int MIN_WINDOW_WIDTH = 720;
-	private static final int WINDOW_HEIGHT = 430;
-	private static final int WINDOW_WIDTH = 720;
+    private static final String FILES_LIST = "Files list:";
+    private static final String PATH = "Repo path:";
+    private static final String FROM = "From:";
+    private static final String TO = "To:";
 
-	private Display display;
-	private Shell shell;
-	private Text fileListTextArea, pathText, fromTextArea, toTextArea;
-	private Button saveButton, loadButton, cleanButton, chengeButton, nextButton, nextFileButton;
+    private static final String NAME = "Parse";
+    private static final int MIN_WINDOW_HEIGHT = 430;
+    private static final int MIN_WINDOW_WIDTH = 720;
+    private static final int WINDOW_HEIGHT = 430;
+    private static final int WINDOW_WIDTH = 720;
 
-	public void open() {
-		initShell();
-		initDataUI();
-		openWindow();
-	}
+    private Display display;
+    private Shell shell;
+    private Text fileListTextArea, pathText, fromTextArea, toTextArea;
+    private Button saveButton, loadButton, cleanButton, chengeButton, nextButton, nextFileButton;
 
-	private void initDataUI() {
-		Composite dataCompoiste = new Composite(shell, SWT.NONE);
-		dataCompoiste.setLayout(new GridLayout(1, true));
-		SashForm sashForm = new SashForm(dataCompoiste, SWT.VERTICAL | SWT.SMOOTH);
+    public void open() {
+        initShell();
+        initDataUI();
+        openWindow();
+    }
 
-		GridData sashGridData = new GridData(GridData.FILL_BOTH);
-		sashForm.setLayoutData(sashGridData);
+    private void initDataUI() {
+        Composite dataCompoiste = new Composite(shell, SWT.NONE);
+        dataCompoiste.setLayout(new GridLayout(1, true));
+        SashForm sashForm = new SashForm(dataCompoiste, SWT.VERTICAL | SWT.SMOOTH);
 
-		Composite filesListComposite = new Composite(sashForm, SWT.FILL);
-		GridLayout textGridLayout = new GridLayout(1, true);
-		filesListComposite.setLayout(textGridLayout);
+        GridData sashGridData = new GridData(GridData.FILL_BOTH);
+        sashForm.setLayoutData(sashGridData);
 
-		Label pathLabel = new Label(filesListComposite, SWT.BEGINNING);
-		FontData fontData = pathLabel.getFont().getFontData()[0];
-		Font font = new Font(null, new FontData(fontData.getName(), fontData.getHeight(), SWT.BOLD));
-		pathLabel.setText(PATH);
-		pathLabel.setFont(font);
+        Composite filesListComposite = new Composite(sashForm, SWT.FILL);
+        GridLayout textGridLayout = new GridLayout(1, true);
+        filesListComposite.setLayout(textGridLayout);
 
-		GridData addressTextGridData = new GridData(GridData.FILL, GridData.FILL, true, false);
+        Label pathLabel = new Label(filesListComposite, SWT.BEGINNING);
+        FontData fontData = pathLabel.getFont().getFontData()[0];
+        Font font = new Font(null, new FontData(fontData.getName(), fontData.getHeight(), SWT.BOLD));
+        pathLabel.setText(PATH);
+        pathLabel.setFont(font);
 
-		pathText = new Text(filesListComposite, SWT.BORDER | SWT.LEFT);
-		pathText.setLayoutData(addressTextGridData);
+        GridData addressTextGridData = new GridData(GridData.FILL, GridData.FILL, true, false);
 
-		Label filesListLabel = new Label(filesListComposite, SWT.BEGINNING);
-		filesListLabel.setText(FILES_LIST);
-		filesListLabel.setFont(font);
+        pathText = new Text(filesListComposite, SWT.BORDER | SWT.LEFT);
+        pathText.setLayoutData(addressTextGridData);
 
-		fileListTextArea = new Text(filesListComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		fileListTextArea.setLayoutData(sashGridData);
+        Label filesListLabel = new Label(filesListComposite, SWT.BEGINNING);
+        filesListLabel.setText(FILES_LIST);
+        filesListLabel.setFont(font);
 
-		Composite changeComposite = new Composite(sashForm, SWT.FILL);
-		changeComposite.setLayout(textGridLayout);
+        fileListTextArea = new Text(filesListComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        fileListTextArea.setLayoutData(sashGridData);
 
-		Label changeLabel = new Label(changeComposite, SWT.BEGINNING);
-		changeLabel.setText(CHANGE);
-		changeLabel.setFont(font);
+        Composite changeComposite = new Composite(sashForm, SWT.FILL);
+        changeComposite.setLayout(textGridLayout);
 
-		GridData lineSeparatorGridData = new GridData(GridData.FILL_HORIZONTAL);
+        Label changeLabel = new Label(changeComposite, SWT.BEGINNING);
+        changeLabel.setText(CHANGE);
+        changeLabel.setFont(font);
 
-		Label separatorLabel = new Label(changeComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		separatorLabel.setLayoutData(lineSeparatorGridData);
+        GridData lineSeparatorGridData = new GridData(GridData.FILL_HORIZONTAL);
 
-		SashForm changeSashForm = new SashForm(changeComposite, SWT.HORIZONTAL | SWT.SMOOTH);
-		changeSashForm.setLayoutData(sashGridData);
+        Label separatorLabel = new Label(changeComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
+        separatorLabel.setLayoutData(lineSeparatorGridData);
 
-		Composite changeFromComposite = new Composite(changeSashForm, SWT.NONE);
-		changeFromComposite.setLayout(textGridLayout);
+        SashForm changeSashForm = new SashForm(changeComposite, SWT.HORIZONTAL | SWT.SMOOTH);
+        changeSashForm.setLayoutData(sashGridData);
 
-		Label fromLabel = new Label(changeFromComposite, SWT.BEGINNING);
-		fromLabel.setText(FROM);
-		fromLabel.setFont(font);
+        Composite changeFromComposite = new Composite(changeSashForm, SWT.NONE);
+        changeFromComposite.setLayout(textGridLayout);
 
-		fromTextArea = new Text(changeFromComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		fromTextArea.setLayoutData(sashGridData);
+        Label fromLabel = new Label(changeFromComposite, SWT.BEGINNING);
+        fromLabel.setText(FROM);
+        fromLabel.setFont(font);
 
-		Composite changeToComposite = new Composite(changeSashForm, SWT.NONE);
-		changeToComposite.setLayout(textGridLayout);
+        fromTextArea = new Text(changeFromComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        fromTextArea.setLayoutData(sashGridData);
 
-		Label toLabel = new Label(changeToComposite, SWT.BEGINNING);
-		toLabel.setText(TO);
-		toLabel.setFont(font);
+        Composite changeToComposite = new Composite(changeSashForm, SWT.NONE);
+        changeToComposite.setLayout(textGridLayout);
 
-		toTextArea = new Text(changeToComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		toTextArea.setLayoutData(sashGridData);
+        Label toLabel = new Label(changeToComposite, SWT.BEGINNING);
+        toLabel.setText(TO);
+        toLabel.setFont(font);
 
-		initControlButtons(dataCompoiste);
+        toTextArea = new Text(changeToComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        toTextArea.setLayoutData(sashGridData);
 
-		Label separatorLabel2 = new Label(dataCompoiste, SWT.HORIZONTAL | SWT.SEPARATOR);
-		separatorLabel2.setLayoutData(lineSeparatorGridData);
+        initControlButtons(dataCompoiste);
 
-		initButton(dataCompoiste);
-	}
+        Label separatorLabel2 = new Label(dataCompoiste, SWT.HORIZONTAL | SWT.SEPARATOR);
+        separatorLabel2.setLayoutData(lineSeparatorGridData);
 
-	private void initControlButtons(Composite dataCompoiste) {
-		Composite nextButtonsComposite = new Composite(dataCompoiste, SWT.NONE);
-		nextButtonsComposite.setLayout(new GridLayout(3, false));
+        initButton(dataCompoiste);
+    }
 
-		GridData gridDataButtonComposit = new GridData();
-		gridDataButtonComposit.horizontalAlignment = SWT.BEGINNING;
-		nextButtonsComposite.setLayoutData(gridDataButtonComposit);
+    private void initControlButtons(Composite dataCompoiste) {
+        Composite nextButtonsComposite = new Composite(dataCompoiste, SWT.NONE);
+        nextButtonsComposite.setLayout(new GridLayout(3, false));
 
-		GridData gridDataButton = new GridData();
-		gridDataButton.widthHint = 80;
-		gridDataButton.heightHint = 20;
-		gridDataButton.horizontalAlignment = SWT.BEGINNING;
+        GridData gridDataButtonComposit = new GridData();
+        gridDataButtonComposit.horizontalAlignment = SWT.BEGINNING;
+        nextButtonsComposite.setLayoutData(gridDataButtonComposit);
 
-		nextButton = new Button(nextButtonsComposite, SWT.PUSH);
-		nextButton.setText(NEXT);
-		nextButton.setLayoutData(gridDataButton);
+        GridData gridDataButton = new GridData();
+        gridDataButton.widthHint = 80;
+        gridDataButton.heightHint = 20;
+        gridDataButton.horizontalAlignment = SWT.BEGINNING;
 
-		nextFileButton = new Button(nextButtonsComposite, SWT.PUSH);
-		nextFileButton.setText(NEXT_FILE);
-		nextFileButton.setLayoutData(gridDataButton);
+        nextButton = new Button(nextButtonsComposite, SWT.PUSH);
+        nextButton.setText(NEXT);
+        nextButton.setLayoutData(gridDataButton);
+        nextButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                replaceToken(FILE_SEPARATOR, EXPRESSION_SEPARATOR);
+            }
 
-		cleanButton = new Button(nextButtonsComposite, SWT.PUSH);
-		cleanButton.setText(CLEAN);
-		cleanButton.setLayoutData(gridDataButton);
-	}
+        });
 
-	private void initButton(Composite dataCompoiste) {
-		Composite inputDataComposite = new Composite(dataCompoiste, SWT.NONE);
-		inputDataComposite.setLayout(new GridLayout(3, true));
+        nextFileButton = new Button(nextButtonsComposite, SWT.PUSH);
+        nextFileButton.setText(NEXT_FILE);
+        nextFileButton.setLayoutData(gridDataButton);
+        nextFileButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                replaceToken(EXPRESSION_SEPARATOR, FILE_SEPARATOR);
+            }
 
-		GridData compositeData = new GridData();
-		compositeData.horizontalAlignment = GridData.END;
-		inputDataComposite.setLayoutData(compositeData);
+        });
 
-		GridData buttonGridData = new GridData();
-		buttonGridData.widthHint = 80;
-		buttonGridData.heightHint = 30;
+        cleanButton = new Button(nextButtonsComposite, SWT.PUSH);
+        cleanButton.setText(CLEAN);
+        cleanButton.setLayoutData(gridDataButton);
+        cleanButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                setTextArea("", "");
+            }
+        });
+    }
 
-		saveButton = new Button(inputDataComposite, SWT.PUSH);
-		saveButton.setText(SAVE);
-		saveButton.setLayoutData(buttonGridData);
+    private void replaceToken(String from_exp, String to_exp) {
+        String from = replaceToken(fromTextArea, toTextArea, from_exp, to_exp);
+        String to = replaceToken(toTextArea, fromTextArea, from_exp, to_exp);
+        setTextArea(from, to);
+    }
 
-		loadButton = new Button(inputDataComposite, SWT.PUSH);
-		loadButton.setText(LOAD);
-		loadButton.setLayoutData(buttonGridData);
+    private String replaceToken(Text textAreaChange, Text textAreaCheck, String from_exp, String to_exp) {
+        String stringChanged = textAreaChange.getText().trim();
+        String stringChecked = textAreaCheck.getText().trim();
+        String lineSeparator = System.lineSeparator();
+        if (stringChanged.isEmpty() && stringChecked.isEmpty()) {
+            return "";
+        } else if (stringChanged.endsWith(to_exp) && stringChecked.endsWith(to_exp)) {
+            return stringChanged;
+        } else if (stringChanged.endsWith(from_exp) && stringChecked.endsWith(from_exp)) {
+            int index = from_exp.length();
+            stringChanged = stringChanged.substring(0, stringChanged.length() - index) + to_exp;
+            return stringChanged;
+        } else {
+            if (!stringChanged.isEmpty()) {
+                stringChanged = stringChanged + lineSeparator + to_exp;
+            } else
+                stringChanged = stringChanged + to_exp;
+            return stringChanged;
+        }
+    }
 
-		chengeButton = new Button(inputDataComposite, SWT.PUSH);
-		chengeButton.setText(CHANGE);
-		chengeButton.setLayoutData(buttonGridData);
-	}
+    private void setTextArea(String from, String to) {
+        fromTextArea.setText(from);
+        toTextArea.setText(to);
+    }
 
-	private void initShell() {
-		display = new Display();
-		shell = new Shell(display);
-		shell.setText(NAME);
-		shell.setMinimumSize(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT);
-		shell.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-		shell.setLayout(new FillLayout());
-	}
+    private void initButton(Composite dataCompoiste) {
+        Composite inputDataComposite = new Composite(dataCompoiste, SWT.NONE);
+        inputDataComposite.setLayout(new GridLayout(3, true));
 
-	private void openWindow() {
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-		display.dispose();
-	}
+        GridData compositeData = new GridData();
+        compositeData.horizontalAlignment = GridData.END;
+        inputDataComposite.setLayoutData(compositeData);
+
+        GridData buttonGridData = new GridData();
+        buttonGridData.widthHint = 80;
+        buttonGridData.heightHint = 30;
+
+        saveButton = new Button(inputDataComposite, SWT.PUSH);
+        saveButton.setText(SAVE);
+        saveButton.setLayoutData(buttonGridData);
+
+        loadButton = new Button(inputDataComposite, SWT.PUSH);
+        loadButton.setText(LOAD);
+        loadButton.setLayoutData(buttonGridData);
+
+        chengeButton = new Button(inputDataComposite, SWT.PUSH);
+        chengeButton.setText(CHANGE);
+        chengeButton.setLayoutData(buttonGridData);
+    }
+
+    private void initShell() {
+        display = new Display();
+        shell = new Shell(display);
+        shell.setText(NAME);
+        shell.setMinimumSize(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT);
+        shell.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        shell.setLayout(new FillLayout());
+    }
+
+    private void openWindow() {
+        shell.open();
+        while (!shell.isDisposed()) {
+            if (!display.readAndDispatch())
+                display.sleep();
+        }
+        display.dispose();
+    }
 }
