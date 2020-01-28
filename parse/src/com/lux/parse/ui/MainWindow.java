@@ -167,39 +167,6 @@ public class MainWindow {
             }
         });
     }
-
-    private void replaceToken(String from_exp, String to_exp) {
-        String from = replaceToken(fromTextArea, toTextArea, from_exp, to_exp);
-        String to = replaceToken(toTextArea, fromTextArea, from_exp, to_exp);
-        setTextArea(from, to);
-    }
-
-    private String replaceToken(Text textAreaChange, Text textAreaCheck, String from_exp, String to_exp) {
-        String stringChanged = textAreaChange.getText().trim();
-        String stringChecked = textAreaCheck.getText().trim();
-        String lineSeparator = System.lineSeparator();
-        if (stringChanged.isEmpty() && stringChecked.isEmpty()) {
-            return "";
-        } else if (stringChanged.endsWith(to_exp) && stringChecked.endsWith(to_exp)) {
-            return stringChanged;
-        } else if (stringChanged.endsWith(from_exp) && stringChecked.endsWith(from_exp)) {
-            int index = from_exp.length();
-            stringChanged = stringChanged.substring(0, stringChanged.length() - index) + to_exp;
-            return stringChanged;
-        } else {
-            if (!stringChanged.isEmpty()) {
-                stringChanged = stringChanged + lineSeparator + to_exp;
-            } else
-                stringChanged = stringChanged + to_exp;
-            return stringChanged;
-        }
-    }
-
-    private void setTextArea(String from, String to) {
-        fromTextArea.setText(from);
-        toTextArea.setText(to);
-    }
-
     private void initButton(Composite dataCompoiste) {
         Composite inputDataComposite = new Composite(dataCompoiste, SWT.NONE);
         inputDataComposite.setLayout(new GridLayout(3, true));
@@ -223,6 +190,37 @@ public class MainWindow {
         chengeButton = new Button(inputDataComposite, SWT.PUSH);
         chengeButton.setText(CHANGE);
         chengeButton.setLayoutData(buttonGridData);
+    }
+    private void replaceToken(String from_exp, String to_exp) {
+        String from = replaceToken(fromTextArea, toTextArea, from_exp, to_exp);
+        String to = replaceToken(toTextArea, fromTextArea, from_exp, to_exp);
+        setTextArea(from, to);
+    }
+
+    private String replaceToken(Text textAreaChange, Text textAreaCheck, String from_exp, String to_exp) {
+        String stringChanged = textAreaChange.getText().trim();
+        String stringChecked = textAreaCheck.getText().trim();
+        String lineSeparator = System.lineSeparator();
+        if (stringChanged.isEmpty() && stringChecked.isEmpty()) {
+            return "";
+        } else if (stringChanged.endsWith(to_exp) && stringChecked.endsWith(to_exp)) {
+            return stringChanged+ lineSeparator;
+        } else if (stringChanged.endsWith(from_exp) && stringChecked.endsWith(from_exp)) {
+            int index = from_exp.length();
+            stringChanged = stringChanged.substring(0, stringChanged.length() - index) + to_exp;
+            return stringChanged;
+        } else {
+            if (!stringChanged.isEmpty()) {
+                stringChanged = stringChanged + lineSeparator + to_exp;
+            } else
+                stringChanged = stringChanged + to_exp;
+            return stringChanged;
+        }
+    }
+
+    private void setTextArea(String from, String to) {
+        fromTextArea.setText(from);
+        toTextArea.setText(to);
     }
 
     private void initShell() {
