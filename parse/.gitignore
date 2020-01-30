@@ -1,5 +1,4 @@
 /bin/
-settings.json
 target/
 *.class
 *.jar

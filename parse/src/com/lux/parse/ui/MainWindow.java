@@ -1,5 +1,9 @@
 package com.lux.parse.ui;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -12,14 +16,25 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.json.simple.parser.ParseException;
+
+import com.lux.parse.manager.DataManager;
 
 public class MainWindow {
+    
+    // Error messages
+    private static final String IOERROR = "I/O Error";
+    private static final String MESSAGE_FILE_READ_ERROR = "Error occured while file was reading";
+    private static final String MESSAGE_FILE_WRITE_ERROR = "Error occured while file was writing";
+    
     private static final String FILE_SEPARATOR = "<<<NEXT_FILE>>>";
     private static final String EXPRESSION_SEPARATOR = "<<<NEXT>>>";
-
+    
+    private static final String OPEN = "Open";
     private static final String CLEAN = "Clean";
     private static final String CHANGE = "Change";
     private static final String SAVE = "Save";
@@ -42,8 +57,10 @@ public class MainWindow {
     private Shell shell;
     private Text fileListTextArea, pathText, fromTextArea, toTextArea;
     private Button saveButton, loadButton, cleanButton, chengeButton, nextButton, nextFileButton;
+    private DataManager dataManager;
 
     public void open() {
+        dataManager = new DataManager();
         initShell();
         initDataUI();
         openWindow();
@@ -141,7 +158,7 @@ public class MainWindow {
         nextButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                replaceToken(FILE_SEPARATOR, EXPRESSION_SEPARATOR);
+                setToken(FILE_SEPARATOR, EXPRESSION_SEPARATOR);
             }
 
         });
@@ -152,7 +169,7 @@ public class MainWindow {
         nextFileButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                replaceToken(EXPRESSION_SEPARATOR, FILE_SEPARATOR);
+                setToken(EXPRESSION_SEPARATOR, FILE_SEPARATOR);
             }
 
         });
@@ -167,6 +184,7 @@ public class MainWindow {
             }
         });
     }
+
     private void initButton(Composite dataCompoiste) {
         Composite inputDataComposite = new Composite(dataCompoiste, SWT.NONE);
         inputDataComposite.setLayout(new GridLayout(3, true));
@@ -182,16 +200,94 @@ public class MainWindow {
         saveButton = new Button(inputDataComposite, SWT.PUSH);
         saveButton.setText(SAVE);
         saveButton.setLayoutData(buttonGridData);
+        saveButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                save();
+            }
+        });
 
         loadButton = new Button(inputDataComposite, SWT.PUSH);
         loadButton.setText(LOAD);
         loadButton.setLayoutData(buttonGridData);
+        loadButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                load();
+            }
+        });
 
         chengeButton = new Button(inputDataComposite, SWT.PUSH);
         chengeButton.setText(CHANGE);
         chengeButton.setLayoutData(buttonGridData);
+        chengeButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                getData();
+            }
+        });
     }
-    private void replaceToken(String from_exp, String to_exp) {
+
+    private void save() {
+        File file = createFileDialog(SAVE, new String[] { "*.json" }, SWT.SAVE);
+        try {
+            if (file != null) {
+                saveData(file);
+            }
+        } catch (IOException e) {
+            MessageDialog.openError(shell, IOERROR, file.getName() + ": " + MESSAGE_FILE_WRITE_ERROR);
+        }
+    }
+
+    private void load() {
+        File file = createFileDialog(OPEN, new String[] { "*.json" }, SWT.OPEN);
+        try {
+            if (file != null) {
+                loadData(file);
+            }
+        } catch (Exception e) {
+            MessageDialog.openError(shell, IOERROR, file.getName() + ": " + MESSAGE_FILE_READ_ERROR);
+        }
+    }
+
+    private File createFileDialog(String action, String[] filter, int swtType) {
+        FileDialog fd = new FileDialog(shell, swtType);
+        fd.setText(action);
+        fd.setFilterExtensions(filter);
+        File file = null;
+        if (fd.open() != null) {
+            file = new File(fd.getFilterPath() + "\\" + fd.getFileName());
+        }
+        return file;
+    }
+    
+
+    private void saveData(File file) throws IOException{
+        String fileNames = fileListTextArea.getText().trim();
+        String path = pathText.getText().trim();
+        String from = fromTextArea.getText().trim();
+        String to = toTextArea.getText().trim();
+        dataManager.saveToFile(file,path, fileNames, from, to);
+        
+    }
+    
+    private void loadData(File file) throws IOException,ParseException{
+        dataManager.loadFromFile(file);
+        pathText.setText(dataManager.getPath());
+        fileListTextArea.setText(dataManager.getFileNames());
+        fromTextArea.setText(dataManager.getFrom());
+        toTextArea.setText(dataManager.getTo());
+    }
+
+    private void getData() {
+        String fileNames = fileListTextArea.getText().trim();
+        String path = pathText.getText().trim();
+        String from = fromTextArea.getText().trim();
+        String to = toTextArea.getText().trim();
+        dataManager.getParsingModel(path, fileNames, from, to);
+    }
+
+    private void setToken(String from_exp, String to_exp) {
         String from = replaceToken(fromTextArea, toTextArea, from_exp, to_exp);
         String to = replaceToken(toTextArea, fromTextArea, from_exp, to_exp);
         setTextArea(from, to);
@@ -204,16 +300,17 @@ public class MainWindow {
         if (stringChanged.isEmpty() && stringChecked.isEmpty()) {
             return "";
         } else if (stringChanged.endsWith(to_exp) && stringChecked.endsWith(to_exp)) {
-            return stringChanged+ lineSeparator;
+            return stringChanged + lineSeparator;
         } else if (stringChanged.endsWith(from_exp) && stringChecked.endsWith(from_exp)) {
             int index = from_exp.length();
-            stringChanged = stringChanged.substring(0, stringChanged.length() - index) + to_exp;
+            stringChanged = stringChanged.substring(0, stringChanged.length() - index) + to_exp+lineSeparator;
             return stringChanged;
         } else {
             if (!stringChanged.isEmpty()) {
-                stringChanged = stringChanged + lineSeparator + to_exp;
-            } else
-                stringChanged = stringChanged + to_exp;
+                stringChanged = stringChanged + lineSeparator + to_exp+lineSeparator;
+            } else {
+                stringChanged = stringChanged + to_exp+lineSeparator;
+            }
             return stringChanged;
         }
     }
