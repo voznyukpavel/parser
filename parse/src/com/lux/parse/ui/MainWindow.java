@@ -22,18 +22,19 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.json.simple.parser.ParseException;
 
+import com.lux.parse.exceptions.FromToParseException;
 import com.lux.parse.manager.DataManager;
+import com.lux.parse.util.ParserExprassionConstants;
 
 public class MainWindow {
-    
+
     // Error messages
     private static final String IOERROR = "I/O Error";
     private static final String MESSAGE_FILE_READ_ERROR = "Error occured while file was reading";
     private static final String MESSAGE_FILE_WRITE_ERROR = "Error occured while file was writing";
-    
-    private static final String FILE_SEPARATOR = "<<<NEXT_FILE>>>";
-    private static final String EXPRESSION_SEPARATOR = "<<<NEXT>>>";
-    
+    private static final String PARSE_ERROR="Parse error";
+    private static final String COUNT_OF_TOKENS_DOESNT_MUTCH="Number of tokens or order in \"from\" does not mutch with \"to\"";
+
     private static final String OPEN = "Open";
     private static final String CLEAN = "Clean";
     private static final String CHANGE = "Change";
@@ -158,7 +159,7 @@ public class MainWindow {
         nextButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                setToken(FILE_SEPARATOR, EXPRESSION_SEPARATOR);
+                setToken(ParserExprassionConstants.FILE_SEPARATOR, ParserExprassionConstants.EXPRESSION_SEPARATOR);
             }
 
         });
@@ -169,7 +170,7 @@ public class MainWindow {
         nextFileButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                setToken(EXPRESSION_SEPARATOR, FILE_SEPARATOR);
+                setToken(ParserExprassionConstants.EXPRESSION_SEPARATOR, ParserExprassionConstants.FILE_SEPARATOR);
             }
 
         });
@@ -260,18 +261,17 @@ public class MainWindow {
         }
         return file;
     }
-    
 
-    private void saveData(File file) throws IOException{
+    private void saveData(File file) throws IOException {
         String fileNames = fileListTextArea.getText().trim();
         String path = pathText.getText().trim();
         String from = fromTextArea.getText().trim();
         String to = toTextArea.getText().trim();
-        dataManager.saveToFile(file,path, fileNames, from, to);
-        
+        dataManager.saveToFile(file, path, fileNames, from, to);
+
     }
-    
-    private void loadData(File file) throws IOException,ParseException{
+
+    private void loadData(File file) throws IOException, ParseException {
         dataManager.loadFromFile(file);
         pathText.setText(dataManager.getPath());
         fileListTextArea.setText(dataManager.getFileNames());
@@ -284,7 +284,13 @@ public class MainWindow {
         String path = pathText.getText().trim();
         String from = fromTextArea.getText().trim();
         String to = toTextArea.getText().trim();
-        dataManager.getParsingModel(path, fileNames, from, to);
+        try {
+            dataManager.getParsingModel(path, fileNames, from, to);
+        } catch (FromToParseException ftpe) {
+            MessageDialog.openError(shell, PARSE_ERROR,  COUNT_OF_TOKENS_DOESNT_MUTCH);
+        }catch(IOException e) {
+            MessageDialog.openError(shell, IOERROR,  IOERROR);
+        }
     }
 
     private void setToken(String from_exp, String to_exp) {
@@ -303,13 +309,13 @@ public class MainWindow {
             return stringChanged + lineSeparator;
         } else if (stringChanged.endsWith(from_exp) && stringChecked.endsWith(from_exp)) {
             int index = from_exp.length();
-            stringChanged = stringChanged.substring(0, stringChanged.length() - index) + to_exp+lineSeparator;
+            stringChanged = stringChanged.substring(0, stringChanged.length() - index) + to_exp + lineSeparator;
             return stringChanged;
         } else {
             if (!stringChanged.isEmpty()) {
-                stringChanged = stringChanged + lineSeparator + to_exp+lineSeparator;
+                stringChanged = stringChanged + lineSeparator + to_exp + lineSeparator;
             } else {
-                stringChanged = stringChanged + to_exp+lineSeparator;
+                stringChanged = stringChanged + to_exp + lineSeparator;
             }
             return stringChanged;
         }
