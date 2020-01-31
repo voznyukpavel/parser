@@ -30,47 +30,42 @@ class ParseProcess {
         getSubDirectories(parsingModel.getFileNames());
         prepareWays(path);
         validationFromTo(from, to);
-        String[][]splitedFrom=splite(from);
-        String[][]splitedTo=splite(to);
+        String[][] splitedFrom = splite(from);
+        String[][] splitedTo = splite(to);
         parse(splitedFrom, splitedTo);
-        // System.out.println(ways);
-
     }
 
     private String[][] splite(String from) {
         String[][] result;
         String[] filesCont = from.split(ParserExprassionConstants.FILE_SEPARATOR);
-        result=new String[filesCont.length][];
-        for(int i=0;i<filesCont.length;i++) {
-            result[i]= filesCont[i].split(ParserExprassionConstants.EXPRESSION_SEPARATOR);
+        result = new String[filesCont.length][];
+        for (int i = 0; i < filesCont.length; i++) {
+            result[i] = filesCont[i].split(ParserExprassionConstants.EXPRESSION_SEPARATOR);
         }
         return result;
     }
 
-    private void parse(String [][]from, String[][] to) throws IOException {
+    private void parse(String[][] from, String[][] to) throws IOException {
         int size = ways.size();
         for (int i = 0; i < size; i++) {
             LinkedHashMap<Integer, File> waysLocal = ways.get(i);
             int lsize = waysLocal.size();
             for (int j = 0; j < lsize; j++) {
                 Path path = waysLocal.get(j).toPath();
-                replace(path,from[j],to[j]);
+                replace(path, from[j], to[j]);
             }
         }
     }
 
     private void replace(Path path, String[] from, String[] to) throws IOException {
         String content = new String(Files.readAllBytes(path), charset);
-        for(int i=0;i<from.length;i++) {
-            from[i].trim();
-            to[i].trim();
+        for (int i = 0; i < from.length; i++) {
+            // TODO
             content = content.replaceAll(from[i], to[i]);
             System.out.println("");
         }
-        content = content.replaceAll("foo", "bar");
         Files.write(path, content.getBytes(charset));
     }
-
 
     private void validationFromTo(String from, String to) throws FromToParseException {
         if (!getToken(from).equals(getToken(to))) {
