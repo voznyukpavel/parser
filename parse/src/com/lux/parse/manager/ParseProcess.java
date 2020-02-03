@@ -60,8 +60,8 @@ class ParseProcess {
 	private void replace(Path path, String[] from, String[] to) throws IOException {
 		String content = new String(Files.readAllBytes(path), charset);
 		for (int i = 0; i < from.length; i++) {
-			//from[i] = from[i].replaceAll("(\r\n|\n|\r)", "");
-			from[i] = from[i].replaceAll("(\r\n|\n|\r)+$", "");
+			from[i] = from[i].replaceAll("(\r\n|\n|\r)", "");
+			//from[i] = from[i].replaceAll("(\r\n|\n|\r)+$", "");
 			if (to[i].startsWith("\r\n") || to[i].startsWith("\r") || to[i].startsWith("\n")) {
 				to[i] = to[i].replaceFirst("(\r\n|\n|\r)", "");
 			}
