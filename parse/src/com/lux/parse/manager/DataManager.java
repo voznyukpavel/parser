@@ -12,9 +12,13 @@ import com.lux.parse.util.FileManager;
 public class DataManager {
     private ParsingModel parsingModel;
 
-    public void getParsingModel(String path, String fileNames, String from, String to) throws FromToParseException, IOException {
-        ParseProcess parsing= new ParseProcess();
-        parsing.start(new ParsingModel(path, fileNames, from, to));
+    public void getParsingModel(String path, String fileNames, String from, String to)
+            throws FromToParseException, IOException {
+        ParsingModel model = new ParsingModel(path, fileNames, from, to);
+        AdressesGetter adresses = new AdressesGetter();
+        ParseProcess parsing = new ParseProcess(adresses.getAdresses(model.getPath(), model.getFileNames()),
+                adresses.getDirectories());
+        parsing.start(model.getFrom(), model.getTo());
     }
 
     public void saveToFile(File file, String path, String fileNames, String from, String to) throws IOException {
