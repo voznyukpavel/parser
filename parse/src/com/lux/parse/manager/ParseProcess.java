@@ -13,10 +13,9 @@ import com.lux.parse.exceptions.FromToParseException;
 import com.lux.parse.util.ParserExprassionConstants;
 
 class ParseProcess {
-
+    
     private static final String LINESEPARATOR = System.lineSeparator();
-    private static final String NAME = "\"name\"";
-    private static final Charset charset = StandardCharsets.UTF_8;
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static final String NEXT_LINE = "(\r\n|\n|\r)";
     private static final String NEXT_LINE_LAST = "(\r\n|\n|\r)+$";
 
@@ -77,11 +76,11 @@ class ParseProcess {
     }
 
     private void replace(Path path, String[] from, String[] to,String directories) throws IOException {
-        String content = new String(Files.readAllBytes(path), charset);
+        String content = new String(Files.readAllBytes(path), CHARSET);
         for (int i = 0; i < from.length; i++) {
             from[i] = from[i].replaceAll(NEXT_LINE_LAST, "");
-            from[i] = from[i].replaceAll(NAME, directories);
-            to[i] = to[i].replaceAll(NAME, directories);
+            from[i] = from[i].replaceAll(ParserExprassionConstants.NAME, directories);
+            to[i] = to[i].replaceAll(ParserExprassionConstants.NAME, directories);
             if (identEndOfString(to[i])) {
                 to[i] = to[i].replaceFirst(NEXT_LINE, "");
             }
@@ -90,7 +89,7 @@ class ParseProcess {
             System.out.println();
             content = replace(from[i], to[i], content);
         }
-        Files.write(path, content.getBytes(charset));
+        Files.write(path, content.getBytes(CHARSET));
     }
 
     private String replace(String from, String to, String content) {

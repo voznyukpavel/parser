@@ -5,8 +5,10 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
+import com.lux.parse.util.ParserExprassionConstants;
+
 class AdressesGetter {
-    private static final String NAME = "\"name\"";
+    
     private String[] directories;
     private String[] subDirectories;
     
@@ -44,7 +46,7 @@ class AdressesGetter {
         for (int i = 0; i < directories.length; i++) {
             LinkedHashMap<Integer, File> waysLocal = new LinkedHashMap<Integer, File>();
             for (int j = 0; j < subDirectories.length; j++) {
-                String temp = subDirectories[j].replaceAll(NAME, directories[i]);
+                String temp = subDirectories[j].replaceAll(ParserExprassionConstants.NAME, directories[i]);
                 File file = new File(path + directories[i] + backSlash + temp);
                 if (file.exists()) {
                     waysLocal.put(j, file);

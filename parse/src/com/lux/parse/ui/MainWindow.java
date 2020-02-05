@@ -16,8 +16,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.json.simple.parser.ParseException;
@@ -121,6 +123,11 @@ public class MainWindow {
 
         fromTextArea = new Text(changeFromComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fromTextArea.setLayoutData(sashGridData);
+        fromTextArea.addListener(SWT.Modify, new Listener(){
+            public void handleEvent(Event e){
+                fromTextArea.setTopIndex(fromTextArea.getLineCount() - 1);
+            }
+        });
 
         Composite changeToComposite = new Composite(changeSashForm, SWT.NONE);
         changeToComposite.setLayout(textGridLayout);
@@ -131,6 +138,11 @@ public class MainWindow {
 
         toTextArea = new Text(changeToComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         toTextArea.setLayoutData(sashGridData);
+        toTextArea.addListener(SWT.Modify, new Listener(){
+            public void handleEvent(Event e){
+                toTextArea.setTopIndex(toTextArea.getLineCount() - 1);
+            }
+        });
 
         initControlButtons(dataCompoiste);
 
