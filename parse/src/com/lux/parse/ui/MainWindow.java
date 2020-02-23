@@ -298,7 +298,7 @@ public class MainWindow {
         String to = toTextArea.getText().trim();
         try {
             dataManager.getParsingModel(path, fileNames, from, to);
-        } catch (FromToParseException ftpe) {
+        }catch (FromToParseException ftpe) {
             MessageDialog.openError(shell, PARSE_ERROR,  COUNT_OF_TOKENS_DOESNT_MUTCH);
         }catch(IOException e) {
             MessageDialog.openError(shell, IOERROR,  IOERROR);
