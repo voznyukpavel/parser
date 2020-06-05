@@ -29,7 +29,7 @@ import org.apache.commons.io.FileUtils;
 
 import com.lux.parse.exceptions.FromToParseException;
 import com.lux.parse.manager.DataManager;
-import com.lux.parse.util.ParserExprassionConstants;
+import com.lux.parse.util.ParserExpressionConstants;
 
 public class MainWindow {
 
@@ -182,7 +182,7 @@ public class MainWindow {
         nextButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                setToken(ParserExprassionConstants.FILE_SEPARATOR, ParserExprassionConstants.EXPRESSION_SEPARATOR);
+                setToken(ParserExpressionConstants.FILE_SEPARATOR, ParserExpressionConstants.EXPRESSION_SEPARATOR);
             }
 
         });
@@ -193,7 +193,7 @@ public class MainWindow {
         nextFileButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                setToken(ParserExprassionConstants.EXPRESSION_SEPARATOR, ParserExprassionConstants.FILE_SEPARATOR);
+                setToken(ParserExpressionConstants.EXPRESSION_SEPARATOR, ParserExpressionConstants.FILE_SEPARATOR);
             }
 
         });
