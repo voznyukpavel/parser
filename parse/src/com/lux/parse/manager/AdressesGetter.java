@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
-import com.lux.parse.util.ParserExprassionConstants;
+import com.lux.parse.util.ParserExpressionConstants;
 import org.apache.commons.lang3.ArrayUtils;
 
 class AdressesGetter {
@@ -84,7 +84,7 @@ class AdressesGetter {
         for (int i = 0; i < directories.length; i++) {
             LinkedHashMap<Integer, File> waysLocal = new LinkedHashMap<Integer, File>();
             for (int j = 0; j < subDirectories.length; j++) {
-                String temp = subDirectories[j].replaceAll(ParserExprassionConstants.NAME, directories[i]);
+                String temp = subDirectories[j].replaceAll(ParserExpressionConstants.NAME, directories[i]);
                 File file = new File(path + directories[i] + backSlash + temp);
                 if (file.exists()) {
                     waysLocal.put(j, file);
