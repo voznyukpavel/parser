@@ -17,9 +17,9 @@ class AdressesGetter {
     
     public ArrayList<LinkedHashMap<Integer, File>> getAdresses(String path,String skip,String fileNames) {
         LinkedList<String> skipList= getSkip(skip);
-        getDirectories(path,skipList);
-        getSubDirectories(fileNames);
-
+        String[] directories=getDirectories(path);
+        this.directories=excludes(directories,skipList);
+        this.subDirectories=getSubDirectories(fileNames);
         return prepareWays(path);
     }
 
@@ -38,7 +38,7 @@ class AdressesGetter {
         return directories;
     }
     
-    private void getDirectories(String path,LinkedList<String> skip) {
+    private String[] getDirectories(String path) {
         File file = new File(path);
         String[]directories = file.list(new FilenameFilter() {
             @Override
@@ -46,10 +46,10 @@ class AdressesGetter {
                 return new File(current, name).isDirectory();
             }
         });
-        excludes(directories,skip);
+        return directories;
     }
 
-    private void excludes(String[] directories, LinkedList<String> skip) {
+    private String[] excludes(String[] directories, LinkedList<String> skip) {
        for(int i=0;i<skip.size();i++) {
            for(int j=0;j<directories.length;j++) {
                if(skip.get(i).trim().equals(directories[j].trim())) {
@@ -57,8 +57,7 @@ class AdressesGetter {
                }
            }
        }
-
-       this.directories=directories;
+      return directories;
       // show(this.directories);
     }
 
@@ -69,9 +68,9 @@ class AdressesGetter {
         
     }
 
-    private void getSubDirectories(String fileNames) {
+    private String[] getSubDirectories(String fileNames) {
         String lineSeparator = System.lineSeparator();
-        subDirectories = fileNames.split(lineSeparator);
+        return fileNames.split(lineSeparator);
     }
 
     private ArrayList<LinkedHashMap<Integer, File>> prepareWays(String path) {
