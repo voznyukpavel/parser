@@ -23,6 +23,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.json.simple.parser.ParseException;
+import org.apache.commons.io.FileUtils;
+
+
 
 import com.lux.parse.exceptions.FromToParseException;
 import com.lux.parse.manager.DataManager;
@@ -253,6 +256,9 @@ public class MainWindow {
         File file = createFileDialog(SAVE, new String[] { "*.json" }, SWT.SAVE);
         try {
             if (file != null) {
+            	//String name=file.getName()+"_parse";
+            	//File newFile = new File(name);
+               // FileUtils.copyFile(file, newFile);
                 saveData(file);
             }
         } catch (IOException e) {

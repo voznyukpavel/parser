@@ -89,7 +89,7 @@ class AdressesGetter {
                 if (file.exists()) {
                     waysLocal.put(j, file);
                 }
-                System.out.println(file.getPath());
+                //System.out.println(file.getPath());
             }
             ways.add(waysLocal);
         }

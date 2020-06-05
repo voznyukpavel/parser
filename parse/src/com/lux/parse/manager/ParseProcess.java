@@ -69,18 +69,28 @@ class ParseProcess {
             int lsize = waysLocal.size();
             for (int j = 0; j < lsize; j++) {
                 Path path = waysLocal.get(j).toPath();
-                replace(path, from[j], to[j],directories[i]);
+                if(i==0) {
+                	 replace(path, from[j], to[j],directories[i],"");
+                }else {
+                	 replace(path, from[j], to[j],directories[i],directories[i-1]);
+                }
                 System.out.println();
             }
         }
     }
 
-    private void replace(Path path, String[] from, String[] to,String directories) throws IOException {
+    private void replace(Path path, String[] from, String[] to,String curentDirectory,String prevDerectory) throws IOException {
         String content = new String(Files.readAllBytes(path), CHARSET);
         for (int i = 0; i < from.length; i++) {
-            from[i] = from[i].replaceAll(NEXT_LINE_LAST, "");
-            from[i] = from[i].replaceAll(ParserExprassionConstants.NAME, directories);
-            to[i] = to[i].replaceAll(ParserExprassionConstants.NAME, directories);
+            from[i] = from[i].replaceAll(NEXT_LINE_LAST, "").trim();
+            if(prevDerectory.isEmpty()) {
+            	 from[i] = from[i].replaceAll(ParserExprassionConstants.NAME, curentDirectory);
+                 to[i] = to[i].replaceAll(ParserExprassionConstants.NAME, curentDirectory);
+            }else {
+            	 from[i] = from[i].replaceAll(prevDerectory, curentDirectory);
+                 to[i] = to[i].replaceAll(prevDerectory, curentDirectory);
+            }
+            //System.out.println(to[i]+"  "+ParserExprassionConstants.NAME);
             if (identEndOfString(to[i])) {
                 to[i] = to[i].replaceFirst(NEXT_LINE, "");
             }
