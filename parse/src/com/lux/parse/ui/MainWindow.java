@@ -26,7 +26,7 @@ import org.json.simple.parser.ParseException;
 
 import com.lux.parse.exceptions.FromToParseException;
 import com.lux.parse.manager.DataManager;
-import com.lux.parse.util.ParserExprassionConstants;
+import com.lux.parse.util.ParserExpressionConstants;
 
 public class MainWindow {
 
@@ -34,8 +34,8 @@ public class MainWindow {
     private static final String IOERROR = "I/O Error";
     private static final String MESSAGE_FILE_READ_ERROR = "Error occured while file was reading";
     private static final String MESSAGE_FILE_WRITE_ERROR = "Error occured while file was writing";
-    private static final String PARSE_ERROR="Parse error";
-    private static final String COUNT_OF_TOKENS_DOESNT_MUTCH="Number of tokens or order in \"from\" does not mutch with \"to\"";
+    private static final String PARSE_ERROR = "Parse error";
+    private static final String COUNT_OF_TOKENS_DOESNT_MUTCH = "Number of tokens or order in \"from\" does not mutch with \"to\"";
 
     private static final String OPEN = "Open";
     private static final String CLEAN = "Clean";
@@ -47,18 +47,19 @@ public class MainWindow {
 
     private static final String FILES_LIST = "Files list:";
     private static final String PATH = "Repo path:";
+    private static final String SKIP = "Skip:";
     private static final String FROM = "From:";
     private static final String TO = "To:";
 
     private static final String NAME = "Parse";
     private static final int MIN_WINDOW_HEIGHT = 430;
     private static final int MIN_WINDOW_WIDTH = 720;
-    private static final int WINDOW_HEIGHT = 430;
+    private static final int WINDOW_HEIGHT = 500;
     private static final int WINDOW_WIDTH = 720;
 
     private Display display;
     private Shell shell;
-    private Text fileListTextArea, pathText, fromTextArea, toTextArea;
+    private Text fileListTextArea, skipText, pathText, fromTextArea, toTextArea;
     private Button saveButton, loadButton, cleanButton, chengeButton, nextButton, nextFileButton;
     private DataManager dataManager;
 
@@ -92,6 +93,13 @@ public class MainWindow {
         pathText = new Text(filesListComposite, SWT.BORDER | SWT.LEFT);
         pathText.setLayoutData(addressTextGridData);
 
+        Label skipLabel = new Label(filesListComposite, SWT.BEGINNING);
+        skipLabel.setText(SKIP);
+        skipLabel.setFont(font);
+
+        skipText = new Text(filesListComposite, SWT.BORDER | SWT.LEFT);
+        skipText.setLayoutData(addressTextGridData);
+
         Label filesListLabel = new Label(filesListComposite, SWT.BEGINNING);
         filesListLabel.setText(FILES_LIST);
         filesListLabel.setFont(font);
@@ -123,9 +131,9 @@ public class MainWindow {
 
         fromTextArea = new Text(changeFromComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fromTextArea.setLayoutData(sashGridData);
-        fromTextArea.addListener(SWT.Modify, new Listener(){
-            public void handleEvent(Event e){
-                fromTextArea.setTopIndex(fromTextArea.getLineCount() - 1);
+        fromTextArea.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event e) {
+                // fromTextArea.setTopIndex(fromTextArea.getLineCount() - 1);
             }
         });
 
@@ -138,9 +146,9 @@ public class MainWindow {
 
         toTextArea = new Text(changeToComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         toTextArea.setLayoutData(sashGridData);
-        toTextArea.addListener(SWT.Modify, new Listener(){
-            public void handleEvent(Event e){
-                toTextArea.setTopIndex(toTextArea.getLineCount() - 1);
+        toTextArea.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event e) {
+                // toTextArea.setTopIndex(toTextArea.getLineCount() - 1);
             }
         });
 
@@ -171,7 +179,7 @@ public class MainWindow {
         nextButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                setToken(ParserExprassionConstants.FILE_SEPARATOR, ParserExprassionConstants.EXPRESSION_SEPARATOR);
+                setToken(ParserExpressionConstants.FILE_SEPARATOR, ParserExpressionConstants.EXPRESSION_SEPARATOR);
             }
 
         });
@@ -182,7 +190,7 @@ public class MainWindow {
         nextFileButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                setToken(ParserExprassionConstants.EXPRESSION_SEPARATOR, ParserExprassionConstants.FILE_SEPARATOR);
+                setToken(ParserExpressionConstants.EXPRESSION_SEPARATOR, ParserExpressionConstants.FILE_SEPARATOR);
             }
 
         });
@@ -277,15 +285,17 @@ public class MainWindow {
     private void saveData(File file) throws IOException {
         String fileNames = fileListTextArea.getText().trim();
         String path = pathText.getText().trim();
+        String skip = skipText.getText().trim();
         String from = fromTextArea.getText().trim();
         String to = toTextArea.getText().trim();
-        dataManager.saveToFile(file, path, fileNames, from, to);
+        dataManager.saveToFile(file, path, skip, fileNames, from, to);
 
     }
 
     private void loadData(File file) throws IOException, ParseException {
         dataManager.loadFromFile(file);
         pathText.setText(dataManager.getPath());
+        skipText.setText(dataManager.getSkip());
         fileListTextArea.setText(dataManager.getFileNames());
         fromTextArea.setText(dataManager.getFrom());
         toTextArea.setText(dataManager.getTo());
@@ -294,14 +304,16 @@ public class MainWindow {
     private void getData() {
         String fileNames = fileListTextArea.getText().trim();
         String path = pathText.getText().trim();
+        String skip = skipText.getText().trim();
         String from = fromTextArea.getText().trim();
         String to = toTextArea.getText().trim();
         try {
-            dataManager.getParsingModel(path, fileNames, from, to);
-        }catch (FromToParseException ftpe) {
-            MessageDialog.openError(shell, PARSE_ERROR,  COUNT_OF_TOKENS_DOESNT_MUTCH);
-        }catch(IOException e) {
-            MessageDialog.openError(shell, IOERROR,  IOERROR);
+            dataManager.getParsingModel(path, skip, fileNames, from, to);
+        } catch (FromToParseException ftpe) {
+            MessageDialog.openError(shell, PARSE_ERROR, COUNT_OF_TOKENS_DOESNT_MUTCH);
+        } catch (IOException e) {
+            MessageDialog.openError(shell, IOERROR, IOERROR);
+
         }
     }
 

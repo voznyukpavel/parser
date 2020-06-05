@@ -17,6 +17,7 @@ public class FileManager {
     public static void saveToFile(File file, ParsingModel model) throws IOException {
         JSONObject obj = new JSONObject();
         obj.put(ParserConstants.PATH, model.getPath());
+        obj.put(ParserConstants.SKIP, model.getSkip());
         obj.put(ParserConstants.FILES, model.getFileNames());
         obj.put(ParserConstants.FROM, model.getFrom());
         obj.put(ParserConstants.TO, model.getTo());
@@ -31,7 +32,7 @@ public class FileManager {
         FileReader reader = new FileReader(file);
         Object obj = jsonParser.parse(reader);
         JSONObject jsonObj = (JSONObject) obj;
-        ParsingModel model = new ParsingModel((String) jsonObj.get(ParserConstants.PATH),
+        ParsingModel model = new ParsingModel((String) jsonObj.get(ParserConstants.PATH),(String) jsonObj.get(ParserConstants.SKIP),
                 (String) jsonObj.get(ParserConstants.FILES), (String) jsonObj.get(ParserConstants.FROM),
                 (String) jsonObj.get(ParserConstants.TO));
         reader.close();

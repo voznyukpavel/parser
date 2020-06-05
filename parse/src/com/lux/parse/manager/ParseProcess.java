@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import com.lux.parse.exceptions.FromToParseException;
-import com.lux.parse.util.ParserExprassionConstants;
+import com.lux.parse.util.ParserExpressionConstants;
 
 class ParseProcess {
-    
+
     private static final String LINESEPARATOR = System.lineSeparator();
     private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static final String NEXT_LINE = "(\r\n|\n|\r)";
@@ -40,8 +40,8 @@ class ParseProcess {
         String result = "";
         String stringArr[] = string.split(NEXT_LINE);
         for (int i = 0; i < stringArr.length; i++) {
-            if (stringArr[i].contains(ParserExprassionConstants.FILE_SEPARATOR)
-                    || stringArr[i].contains(ParserExprassionConstants.EXPRESSION_SEPARATOR)) {
+            if (stringArr[i].contains(ParserExpressionConstants.FILE_SEPARATOR)
+                    || stringArr[i].contains(ParserExpressionConstants.EXPRESSION_SEPARATOR)) {
                 stringArr[i] = stringArr[i].strip();
                 stringArr[i] = stringArr[i].replaceAll("\t", "");
             }
@@ -54,10 +54,10 @@ class ParseProcess {
 
     private String[][] split(String from) {
         String[][] result;
-        String[] filesCont = from.split(ParserExprassionConstants.FILE_SEPARATOR);
+        String[] filesCont = from.split(ParserExpressionConstants.FILE_SEPARATOR);
         result = new String[filesCont.length][];
         for (int i = 0; i < filesCont.length; i++) {
-            result[i] = filesCont[i].split(ParserExprassionConstants.EXPRESSION_SEPARATOR);
+            result[i] = filesCont[i].split(ParserExpressionConstants.EXPRESSION_SEPARATOR);
         }
         return result;
     }
@@ -69,18 +69,29 @@ class ParseProcess {
             int lsize = waysLocal.size();
             for (int j = 0; j < lsize; j++) {
                 Path path = waysLocal.get(j).toPath();
-                replace(path, from[j], to[j],directories[i]);
+                if (i == 0) {
+                    replace(path, from[j], to[j], directories[i], "");
+                } else {
+                    replace(path, from[j], to[j], directories[i], directories[i - 1]);
+                }
                 System.out.println();
             }
         }
     }
 
-    private void replace(Path path, String[] from, String[] to,String directories) throws IOException {
+    private void replace(Path path, String[] from, String[] to, String curentDirectory, String prevDerectory)
+            throws IOException {
         String content = new String(Files.readAllBytes(path), CHARSET);
         for (int i = 0; i < from.length; i++) {
-            from[i] = from[i].replaceAll(NEXT_LINE_LAST, "");
-            from[i] = from[i].replaceAll(ParserExprassionConstants.NAME, directories);
-            to[i] = to[i].replaceAll(ParserExprassionConstants.NAME, directories);
+
+            from[i] = from[i].replaceAll(NEXT_LINE_LAST, "").trim();
+            if (prevDerectory.isEmpty()) {
+                from[i] = from[i].replaceAll(ParserExpressionConstants.NAME, curentDirectory);
+                to[i] = to[i].replaceAll(ParserExpressionConstants.NAME, curentDirectory);
+            } else {
+                from[i] = from[i].replaceAll(prevDerectory, curentDirectory);
+                to[i] = to[i].replaceAll(prevDerectory, curentDirectory);
+            }
             if (identEndOfString(to[i])) {
                 to[i] = to[i].replaceFirst(NEXT_LINE, "");
             }
@@ -98,23 +109,23 @@ class ParseProcess {
         int sizeFrom = valideFrom.size();
         int sizeTo = valideTo.size();
         if (sizeFrom > 1) {
-            int counterMutches = 0;
+            int counterMatches = 0;
             String contentArr[] = content.split(NEXT_LINE);
             for (int i = 0; i < contentArr.length; i++) {
                 for (int j = 0; j < sizeFrom; j++) {
                     String tempTrimmed = contentArr[i].strip();
                     tempTrimmed = tempTrimmed.replaceAll("\t", "");
-                    if (tempTrimmed.equals(valideFrom.get(j)) && counterMutches == j) {
-                        counterMutches++;
+                    if (tempTrimmed.equals(valideFrom.get(j)) && counterMatches == j) {
+                        counterMatches++;
                         i++;
-                        if (counterMutches < sizeFrom) {
+                        if (counterMatches < sizeFrom) {
                             continue;
                         }
                     } else {
-                        counterMutches = 0;
+                        counterMatches = 0;
                     }
-                    if (counterMutches == sizeFrom) {
-                        int changeFrom = i - counterMutches;
+                    if (counterMatches == sizeFrom) {
+                        int changeFrom = i - counterMatches;
                         for (int k = changeFrom, replace = 0; k < i; k++, replace++) {
                             contentArr[k] = contentArr[k].replace(valideFrom.get(replace), valideTo.get(replace));
                             System.out.println(contentArr[k]);
@@ -126,7 +137,7 @@ class ParseProcess {
                             }
                         }
                     }
-                    counterMutches = 0;
+                    counterMatches = 0;
                 }
             }
             content = getContent(contentArr);
@@ -176,17 +187,17 @@ class ParseProcess {
     private String getToken(String check) {
         String result = "";
         while (true) {
-            int next = check.indexOf(ParserExprassionConstants.EXPRESSION_SEPARATOR);
-            int end = check.indexOf(ParserExprassionConstants.FILE_SEPARATOR);
+            int next = check.indexOf(ParserExpressionConstants.EXPRESSION_SEPARATOR);
+            int end = check.indexOf(ParserExpressionConstants.FILE_SEPARATOR);
             if (next == -1 && end == -1) {
                 break;
             }
             if ((next < end || end == -1) && next != -1) {
-                result += check.substring(next, next + ParserExprassionConstants.EXPRESSION_SEPARATOR.length());
-                check = check.replaceFirst(ParserExprassionConstants.EXPRESSION_SEPARATOR, "");
+                result += check.substring(next, next + ParserExpressionConstants.EXPRESSION_SEPARATOR.length());
+                check = check.replaceFirst(ParserExpressionConstants.EXPRESSION_SEPARATOR, "");
             } else if (end != -1) {
-                result += check.substring(end, end + ParserExprassionConstants.FILE_SEPARATOR.length());
-                check = check.replaceFirst(ParserExprassionConstants.FILE_SEPARATOR, "");
+                result += check.substring(end, end + ParserExpressionConstants.FILE_SEPARATOR.length());
+                check = check.replaceFirst(ParserExpressionConstants.FILE_SEPARATOR, "");
             }
         }
         return result;
