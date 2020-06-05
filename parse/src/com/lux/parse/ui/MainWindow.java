@@ -180,6 +180,8 @@ public class MainWindow {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 setToken(ParserExpressionConstants.FILE_SEPARATOR, ParserExpressionConstants.EXPRESSION_SEPARATOR);
+                fromTextArea.setTopIndex(fromTextArea.getLineCount() - 1);
+                toTextArea.setTopIndex(toTextArea.getLineCount() - 1);
             }
 
         });
@@ -191,6 +193,8 @@ public class MainWindow {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 setToken(ParserExpressionConstants.EXPRESSION_SEPARATOR, ParserExpressionConstants.FILE_SEPARATOR);
+                fromTextArea.setTopIndex(fromTextArea.getLineCount() - 1);
+                toTextArea.setTopIndex(toTextArea.getLineCount() - 1);
             }
 
         });
