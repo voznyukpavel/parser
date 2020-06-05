@@ -23,9 +23,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.json.simple.parser.ParseException;
-import org.apache.commons.io.FileUtils;
-
-
 
 import com.lux.parse.exceptions.FromToParseException;
 import com.lux.parse.manager.DataManager;
@@ -37,8 +34,8 @@ public class MainWindow {
     private static final String IOERROR = "I/O Error";
     private static final String MESSAGE_FILE_READ_ERROR = "Error occured while file was reading";
     private static final String MESSAGE_FILE_WRITE_ERROR = "Error occured while file was writing";
-    private static final String PARSE_ERROR="Parse error";
-    private static final String COUNT_OF_TOKENS_DOESNT_MUTCH="Number of tokens or order in \"from\" does not mutch with \"to\"";
+    private static final String PARSE_ERROR = "Parse error";
+    private static final String COUNT_OF_TOKENS_DOESNT_MUTCH = "Number of tokens or order in \"from\" does not mutch with \"to\"";
 
     private static final String OPEN = "Open";
     private static final String CLEAN = "Clean";
@@ -50,7 +47,7 @@ public class MainWindow {
 
     private static final String FILES_LIST = "Files list:";
     private static final String PATH = "Repo path:";
-    private static final String SKIP ="Skip:";
+    private static final String SKIP = "Skip:";
     private static final String FROM = "From:";
     private static final String TO = "To:";
 
@@ -62,7 +59,7 @@ public class MainWindow {
 
     private Display display;
     private Shell shell;
-    private Text fileListTextArea,skipText,pathText, fromTextArea, toTextArea;
+    private Text fileListTextArea, skipText, pathText, fromTextArea, toTextArea;
     private Button saveButton, loadButton, cleanButton, chengeButton, nextButton, nextFileButton;
     private DataManager dataManager;
 
@@ -95,11 +92,11 @@ public class MainWindow {
 
         pathText = new Text(filesListComposite, SWT.BORDER | SWT.LEFT);
         pathText.setLayoutData(addressTextGridData);
-        
+
         Label skipLabel = new Label(filesListComposite, SWT.BEGINNING);
         skipLabel.setText(SKIP);
         skipLabel.setFont(font);
-        
+
         skipText = new Text(filesListComposite, SWT.BORDER | SWT.LEFT);
         skipText.setLayoutData(addressTextGridData);
 
@@ -134,9 +131,9 @@ public class MainWindow {
 
         fromTextArea = new Text(changeFromComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fromTextArea.setLayoutData(sashGridData);
-        fromTextArea.addListener(SWT.Modify, new Listener(){
-            public void handleEvent(Event e){
-              //  fromTextArea.setTopIndex(fromTextArea.getLineCount() - 1);
+        fromTextArea.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event e) {
+                // fromTextArea.setTopIndex(fromTextArea.getLineCount() - 1);
             }
         });
 
@@ -149,9 +146,9 @@ public class MainWindow {
 
         toTextArea = new Text(changeToComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         toTextArea.setLayoutData(sashGridData);
-        toTextArea.addListener(SWT.Modify, new Listener(){
-            public void handleEvent(Event e){
-              //  toTextArea.setTopIndex(toTextArea.getLineCount() - 1);
+        toTextArea.addListener(SWT.Modify, new Listener() {
+            public void handleEvent(Event e) {
+                // toTextArea.setTopIndex(toTextArea.getLineCount() - 1);
             }
         });
 
@@ -256,9 +253,6 @@ public class MainWindow {
         File file = createFileDialog(SAVE, new String[] { "*.json" }, SWT.SAVE);
         try {
             if (file != null) {
-            	//String name=file.getName()+"_parse";
-            	//File newFile = new File(name);
-               // FileUtils.copyFile(file, newFile);
                 saveData(file);
             }
         } catch (IOException e) {
@@ -294,7 +288,7 @@ public class MainWindow {
         String skip = skipText.getText().trim();
         String from = fromTextArea.getText().trim();
         String to = toTextArea.getText().trim();
-        dataManager.saveToFile(file, path, skip,fileNames, from, to);
+        dataManager.saveToFile(file, path, skip, fileNames, from, to);
 
     }
 
@@ -310,15 +304,15 @@ public class MainWindow {
     private void getData() {
         String fileNames = fileListTextArea.getText().trim();
         String path = pathText.getText().trim();
-        String skip =skipText.getText().trim();
+        String skip = skipText.getText().trim();
         String from = fromTextArea.getText().trim();
         String to = toTextArea.getText().trim();
         try {
-            dataManager.getParsingModel(path,skip,fileNames, from, to);
+            dataManager.getParsingModel(path, skip, fileNames, from, to);
         } catch (FromToParseException ftpe) {
-            MessageDialog.openError(shell, PARSE_ERROR,  COUNT_OF_TOKENS_DOESNT_MUTCH);
-        }catch(IOException e) {
-            MessageDialog.openError(shell, IOERROR,  IOERROR);
+            MessageDialog.openError(shell, PARSE_ERROR, COUNT_OF_TOKENS_DOESNT_MUTCH);
+        } catch (IOException e) {
+            MessageDialog.openError(shell, IOERROR, IOERROR);
         }
     }
 

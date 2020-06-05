@@ -13,7 +13,7 @@ import com.lux.parse.exceptions.FromToParseException;
 import com.lux.parse.util.ParserExpressionConstants;
 
 class ParseProcess {
-    
+
     private static final String LINESEPARATOR = System.lineSeparator();
     private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static final String NEXT_LINE = "(\r\n|\n|\r)";
@@ -69,35 +69,29 @@ class ParseProcess {
             int lsize = waysLocal.size();
             for (int j = 0; j < lsize; j++) {
                 Path path = waysLocal.get(j).toPath();
-                if(i==0) {
-                	 replace(path, from[j], to[j],directories[i],"");
-                }else {
-                	 replace(path, from[j], to[j],directories[i],directories[i-1]);
+                if (i == 0) {
+                    replace(path, from[j], to[j], directories[i], "");
+                } else {
+                    replace(path, from[j], to[j], directories[i], directories[i - 1]);
                 }
                 System.out.println();
             }
         }
     }
 
-    private void replace(Path path, String[] from, String[] to,String curentDirectory,String prevDerectory) throws IOException {
+    private void replace(Path path, String[] from, String[] to, String curentDirectory, String prevDerectory)
+            throws IOException {
         String content = new String(Files.readAllBytes(path), CHARSET);
         for (int i = 0; i < from.length; i++) {
 
             from[i] = from[i].replaceAll(NEXT_LINE_LAST, "").trim();
-            if(prevDerectory.isEmpty()) {
-            	 from[i] = from[i].replaceAll(ParserExprassionConstants.NAME, curentDirectory);
-                 to[i] = to[i].replaceAll(ParserExprassionConstants.NAME, curentDirectory);
-            }else {
-            	 from[i] = from[i].replaceAll(prevDerectory, curentDirectory);
-                 to[i] = to[i].replaceAll(prevDerectory, curentDirectory);
+            if (prevDerectory.isEmpty()) {
+                from[i] = from[i].replaceAll(ParserExpressionConstants.NAME, curentDirectory);
+                to[i] = to[i].replaceAll(ParserExpressionConstants.NAME, curentDirectory);
+            } else {
+                from[i] = from[i].replaceAll(prevDerectory, curentDirectory);
+                to[i] = to[i].replaceAll(prevDerectory, curentDirectory);
             }
-            //System.out.println(to[i]+"  "+ParserExprassionConstants.NAME);
-
-            from[i] = from[i].replaceAll(NEXT_LINE_LAST, "");
-            System.out.println(directories);
-            from[i] = from[i].replaceAll(ParserExpressionConstants.NAME,directories);
-            to[i] = to[i].replaceAll(ParserExpressionConstants.NAME,directories);
-           //github.com/voznyukpavel/parser.git
             if (identEndOfString(to[i])) {
                 to[i] = to[i].replaceFirst(NEXT_LINE, "");
             }
