@@ -28,6 +28,11 @@ import com.lux.parse.exceptions.FromToParseException;
 import com.lux.parse.manager.DataManager;
 import com.lux.parse.util.ParserExpressionConstants;
 
+/**
+ * Contains all UI components
+ *
+ */
+
 public class MainWindow {
 
     // Error messages
@@ -63,6 +68,10 @@ public class MainWindow {
     private Button saveButton, loadButton, cleanButton, chengeButton, nextButton, nextFileButton;
     private DataManager dataManager;
 
+    /**
+     * Creates window and initializes components
+     *
+     */
     public void open() {
         dataManager = new DataManager();
         initShell();
@@ -261,7 +270,9 @@ public class MainWindow {
             }
         } catch (IOException e) {
             MessageDialog.openError(shell, IOERROR, file.getName() + ": " + MESSAGE_FILE_WRITE_ERROR);
-        }
+        } catch (FromToParseException e) {
+			e.printStackTrace();
+		}
     }
 
     private void load() {
@@ -286,13 +297,14 @@ public class MainWindow {
         return file;
     }
 
-    private void saveData(File file) throws IOException {
+    private void saveData(File file) throws IOException, FromToParseException {
         String fileNames = fileListTextArea.getText().trim();
         String path = pathText.getText().trim();
         String skip = skipText.getText().trim();
         String from = fromTextArea.getText().trim();
         String to = toTextArea.getText().trim();
-        dataManager.saveToFile(file, path, skip, fileNames, from, to);
+        dataManager= new DataManager(path, skip, fileNames, from, to);
+        dataManager.saveToFile(file);
 
     }
 
@@ -312,7 +324,8 @@ public class MainWindow {
         String from = fromTextArea.getText().trim();
         String to = toTextArea.getText().trim();
         try {
-            dataManager.getParsingModel(path, skip, fileNames, from, to);
+        	dataManager= new DataManager(path, skip, fileNames, from, to);
+            dataManager.parse();
         } catch (FromToParseException ftpe) {
             MessageDialog.openError(shell, PARSE_ERROR, COUNT_OF_TOKENS_DOESNT_MUTCH);
         } catch (IOException e) {

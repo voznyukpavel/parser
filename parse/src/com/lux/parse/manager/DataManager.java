@@ -6,46 +6,127 @@ import java.io.IOException;
 import org.json.simple.parser.ParseException;
 
 import com.lux.parse.exceptions.FromToParseException;
-import com.lux.parse.model.ParsingModel;
 import com.lux.parse.util.FileManager;
 
+/**
+ * 
+ * Data model class
+ */
 public class DataManager {
-    private ParsingModel parsingModel;
 
-    public void getParsingModel(String path,String skip,String fileNames, String from, String to)
-            throws FromToParseException, IOException {
-        ParsingModel model = new ParsingModel(path,skip,fileNames, from, to);
-        AdressesGetter adresses = new AdressesGetter();
-        ParseProcess parsing = new ParseProcess(adresses.getAdresses(model.getPath(), model.getSkip(),model.getFileNames()),
-                adresses.getDirectories());
-        parsing.start(model.getFrom(), model.getTo());
-    }
+	private String path = "";
+	private String skip = "";
+	private String fileNames = "";
+	private String from = "";
+	private String to = "";
 
-    public void saveToFile(File file, String path,String skip ,String fileNames, String from, String to) throws IOException {
-        FileManager.saveToFile(file, new ParsingModel(path,skip ,fileNames, from, to));
-    }
+	/**
+	 * Takes data from window
+	 * 
+	 * @param path      path to repositories
+	 * @param skip      list of repositories which must be skipped
+	 * @param fileNames list of files which must be changed
+	 * @param from      data which must be changed
+	 * @param to        data which replace old data
+	 */
+	public DataManager(String path, String skip, String fileNames, String from, String to) {
+		this.path = path;
+		this.skip = skip;
+		this.fileNames = fileNames;
+		this.from = from;
+		this.to = to;
+	}
 
-    public void loadFromFile(File file) throws IOException, ParseException {
-        parsingModel = FileManager.loadFromFile(file);
-    }
+	/**
+	 * It needs to load data from file
+	 */
+	public DataManager() {
+	}
 
-    public String getPath() {
-        return parsingModel.getPath();
-    }
-    
-    public String getSkip() {
-        return parsingModel.getSkip();
-    }
+	/**
+	 * Starts replacing process
+	 * 
+	 * @throws FromToParseException @see FromToParseException
+	 * @throws IOException          input output exception which can occur during
+	 *                              writing to files which must be changed
+	 */
+	public void parse() throws FromToParseException, IOException {
+		AdressesGetter adresses = new AdressesGetter();
+		new ParseProcess(adresses.getAdresses(path, skip, fileNames), adresses.getDirectories(), from, to);
+	}
 
-    public String getFileNames() {
-        return parsingModel.getFileNames();
-    }
+	/**
+	 * Saves data to file
+	 * 
+	 * @param file target file to save
+	 * @throws IOException          input output exception which can occur during
+	 *                              writing to file
+	 * @throws FromToParseException can occur during parsing and comparing "From" and "To" windows data
+	 */
+	public void saveToFile(File file) throws IOException, FromToParseException {
+		FileManager.saveToFile(file, new DataManager(path, skip, fileNames, from, to));
+	}
 
-    public String getFrom() {
-        return parsingModel.getFrom();
-    }
+	/**
+	 * Loads data from file
+	 * 
+	 * @param file json file which must be loaded
+	 * @throws IOException    input output exception which can occur during reading
+	 *                        from file
+	 * @throws ParseException can occur during parsing json data file
+	 */
+	public void loadFromFile(File file) throws IOException, ParseException {
+		DataManager dataManager;
+		dataManager = FileManager.loadFromFile(file);
+		this.path = dataManager.path;
+		this.skip = dataManager.skip;
+		this.fileNames = dataManager.fileNames;
+		this.from = dataManager.from;
+		this.to = dataManager.to;
+	}
 
-    public String getTo() {
-        return parsingModel.getTo();
-    }
+	/**
+	 * Gets path to repos
+	 * 
+	 * @return path to repos`s folder
+	 */
+	public String getPath() {
+		return path;
+	}
+
+	/**
+	 * Gets repositories list to skip
+	 * 
+	 * @return repos to skip
+	 */
+	public String getSkip() {
+		return skip;
+	}
+
+	/**
+	 * Gets filenames which must be changed
+	 * 
+	 * @return file names
+	 */
+	public String getFileNames() {
+		return fileNames;
+	}
+
+	/**
+	 * Get data which must be changed
+	 * 
+	 * @return change from
+	 */
+	public String getFrom() {
+		return from;
+	}
+
+	/**
+	 * Get new data which replace "From" data
+	 * 
+	 * @return change to
+	 */
+	public String getTo() {
+		return to;
+	}
 }
