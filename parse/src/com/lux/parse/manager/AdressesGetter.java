@@ -104,23 +104,18 @@ class AdressesGetter {
 		}
 		for (int i = 0; i < directories.length; i++) {
 			LinkedHashMap<Integer, LinkedList<File>> waysLocal = new LinkedHashMap<Integer, LinkedList<File>>();
-		//	int items =0;
 			for (int j = 0; j < subDirectories.length; j++) {
 				String temp = subDirectories[j].replaceAll(ParserExpressionConstants.NAME, directories[i]);
 				if (temp.startsWith("..")) {
 					temp = temp.replaceAll("\\.\\.", "");
 					LinkedList<File> fileAsList = findAllFilesByNameInSubDirrectories(path + directories[i], temp);
-					//if (!fileAsList.isEmpty()) {
 						waysLocal.put(j, fileAsList);
-					//	++items;
-					//}
 				} else {
 					File file = new File(path + directories[i] + backSlash + temp);
 					if (file.exists()) {
 						LinkedList<File> fileAsList = new LinkedList<File>();
 						fileAsList.add(file);
 						waysLocal.put(j, fileAsList);
-					//	++items;
 					}
 				}
 			}
