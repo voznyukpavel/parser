@@ -130,11 +130,9 @@ class ParseProcess {
 		ArrayList<String> valideTo = splitByNextString(to);
 		int sizeFrom = valideFrom.size();
 		int sizeTo = valideTo.size();
-
 		if (sizeFrom > 1) {
 			int counterMatches = 0;
 			String contentArr[] = content.split(NEXT_LINE);
-
 			for (int i = 0; i < contentArr.length; i++) {
 				for (int j = 0; j < sizeFrom; j++) {
 					String tempTrimmed = contentArr[i].strip();
