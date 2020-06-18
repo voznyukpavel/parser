@@ -130,9 +130,11 @@ class ParseProcess {
 		ArrayList<String> valideTo = splitByNextString(to);
 		int sizeFrom = valideFrom.size();
 		int sizeTo = valideTo.size();
+
 		if (sizeFrom > 1) {
 			int counterMatches = 0;
 			String contentArr[] = content.split(NEXT_LINE);
+
 			for (int i = 0; i < contentArr.length; i++) {
 				for (int j = 0; j < sizeFrom; j++) {
 					String tempTrimmed = contentArr[i].strip();
@@ -146,18 +148,17 @@ class ParseProcess {
 					} else {
 						counterMatches = 0;
 					}
-					if (counterMatches == sizeFrom//&&sizeFrom<=sizeTo
-					        ) {
+					if (counterMatches == sizeFrom) {
 						int changeFrom = i - counterMatches;
 						for (int k = changeFrom, replace = 0; k < i; k++, replace++) {
-						    if(valideFrom.size()==valideTo.size()) {
-							contentArr[k] = contentArr[k].replace(valideFrom.get(replace), valideTo.get(replace));
-						    }else {
-						        break;
-						    }
-							System.out.println(contentArr[k]);
+							if (replace < valideTo.size()) {
+								contentArr[k] = contentArr[k].replace(valideFrom.get(replace), valideTo.get(replace));
+							}
+							else {
+								contentArr[k] = contentArr[k].replace(valideFrom.get(replace),"");
+							}
 						}
-					//}
+
 						if (sizeFrom < sizeTo) {
 							i--;
 							for (int n = sizeFrom; n < sizeTo; n++) {
