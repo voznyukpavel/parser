@@ -146,12 +146,18 @@ class ParseProcess {
 					} else {
 						counterMatches = 0;
 					}
-					if (counterMatches == sizeFrom) {
+					if (counterMatches == sizeFrom//&&sizeFrom<=sizeTo
+					        ) {
 						int changeFrom = i - counterMatches;
 						for (int k = changeFrom, replace = 0; k < i; k++, replace++) {
+						    if(valideFrom.size()==valideTo.size()) {
 							contentArr[k] = contentArr[k].replace(valideFrom.get(replace), valideTo.get(replace));
+						    }else {
+						        break;
+						    }
 							System.out.println(contentArr[k]);
 						}
+					//}
 						if (sizeFrom < sizeTo) {
 							i--;
 							for (int n = sizeFrom; n < sizeTo; n++) {
@@ -166,7 +172,7 @@ class ParseProcess {
 		} else {
 			from = from.replaceAll(NEXT_LINE, "");
 			if (!from.isEmpty()) {
-				content = content.replaceAll(from, to);
+				content = content.replace(from, to);
 			}
 		}
 		return content;
