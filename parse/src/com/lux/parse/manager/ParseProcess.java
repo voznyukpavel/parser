@@ -158,7 +158,6 @@ class ParseProcess {
 								contentArr[k] = contentArr[k].replace(valideFrom.get(replace),"");
 							}
 						}
-
 						if (sizeFrom < sizeTo) {
 							i--;
 							for (int n = sizeFrom; n < sizeTo; n++) {
