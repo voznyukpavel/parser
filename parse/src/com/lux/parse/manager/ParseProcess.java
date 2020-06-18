@@ -95,7 +95,7 @@ class ParseProcess {
 					} else {
 						replace(path, from[j], to[j], directories[i], directories[i - 1]);
 					}
-					System.out.println();
+					//System.out.println();
 				}
 			}
 		}
@@ -119,7 +119,7 @@ class ParseProcess {
 			}
 			to[i] = to[i].replaceAll(NEXT_LINE_LAST, "");
 			to[i] = to[i].strip();
-			System.out.println();
+			//System.out.println();
 			content = replace(from[i], to[i], content);
 		}
 		Files.write(path, content.getBytes(CHARSET));
