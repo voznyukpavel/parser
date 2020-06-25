@@ -5,19 +5,11 @@ import java.io.IOException;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.Bullet;
-import org.eclipse.swt.custom.LineStyleEvent;
-import org.eclipse.swt.custom.LineStyleListener;
-import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GlyphMetrics;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -63,9 +55,6 @@ public class MainWindow {
     private static final String SKIP = "Skip:";
     private static final String FROM = "From:";
     private static final String TO = "To:";
-    
-    private static final int EXPRESSION_SPLITER_COLOR=SWT.COLOR_DARK_BLUE;
-    private static final int FILE_SPLITER_COLOR=SWT.COLOR_DARK_GREEN;
 
     private static final String NAME = "Parse";
     private static final int MIN_WINDOW_HEIGHT = 430;
@@ -75,8 +64,7 @@ public class MainWindow {
 
     private Display display;
     private Shell shell;
-    private Text fileListTextArea, skipText, pathText;
-    private StyledText fromTextArea, toTextArea;
+    private Text fileListTextArea, skipText, pathText, fromTextArea, toTextArea;
     private Button saveButton, loadButton, cleanButton, chengeButton, nextButton, nextFileButton;
     private DataManager dataManager;
 
@@ -150,11 +138,11 @@ public class MainWindow {
         fromLabel.setText(FROM);
         fromLabel.setFont(font);
 
-        fromTextArea = new StyledText(changeFromComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        fromTextArea = new Text(changeFromComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         fromTextArea.setLayoutData(sashGridData);
         fromTextArea.addListener(SWT.Modify, new Listener() {
             public void handleEvent(Event e) {
-                setColorsToText(fromTextArea);
+                // fromTextArea.setTopIndex(fromTextArea.getLineCount() - 1);
             }
         });
 
@@ -165,14 +153,14 @@ public class MainWindow {
         toLabel.setText(TO);
         toLabel.setFont(font);
 
-        toTextArea = new StyledText(changeToComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        toTextArea = new Text(changeToComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         toTextArea.setLayoutData(sashGridData);
         toTextArea.addListener(SWT.Modify, new Listener() {
             public void handleEvent(Event e) {
-                setColorsToText(toTextArea);
+                // toTextArea.setTopIndex(toTextArea.getLineCount() - 1);
             }
         });
-        
+
         initControlButtons(dataCompoiste);
 
         Label separatorLabel2 = new Label(dataCompoiste, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -181,31 +169,6 @@ public class MainWindow {
         initButton(dataCompoiste);
     }
 
-    private void setColorsToText(StyledText text) {
-        setColorForExpression( text,EXPRESSION_SPLITER_COLOR,ParserExpressionConstants.EXPRESSION_SEPARATOR);
-        setColorForExpression( text,FILE_SPLITER_COLOR,ParserExpressionConstants.FILE_SEPARATOR);
-    }
-    
-    private void setColorForExpression(StyledText text, int colorNum, String expression) {
-        StyleRange style = new StyleRange();
-        int length = expression.length();
-        String string = text.getText();
-        int stringLength = string.length();
-        style.foreground  = display.getSystemColor(colorNum);
-        style.length = length;
-        for (int i = 0; i < stringLength - length; i++) {
-            int index = string.indexOf(expression, i);
-            if (index != -1) {
-                style.start = index;
-                i=index+length;
-                text.setStyleRange(style);
-            }
-            else {
-                break;
-            }
-        }
-    }
-    
     private void initControlButtons(Composite dataCompoiste) {
         Composite nextButtonsComposite = new Composite(dataCompoiste, SWT.NONE);
         nextButtonsComposite.setLayout(new GridLayout(3, false));
@@ -308,8 +271,8 @@ public class MainWindow {
         } catch (IOException e) {
             MessageDialog.openError(shell, IOERROR, file.getName() + ": " + MESSAGE_FILE_WRITE_ERROR);
         } catch (FromToParseException e) {
-            e.printStackTrace();
-        }
+			e.printStackTrace();
+		}
     }
 
     private void load() {
@@ -319,7 +282,6 @@ public class MainWindow {
                 loadData(file);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             MessageDialog.openError(shell, IOERROR, file.getName() + ": " + MESSAGE_FILE_READ_ERROR);
         }
     }
@@ -341,7 +303,7 @@ public class MainWindow {
         String skip = skipText.getText().trim();
         String from = fromTextArea.getText().trim();
         String to = toTextArea.getText().trim();
-        dataManager = new DataManager(path, skip, fileNames, from, to);
+        dataManager= new DataManager(path, skip, fileNames, from, to);
         dataManager.saveToFile(file);
 
     }
@@ -362,7 +324,7 @@ public class MainWindow {
         String from = fromTextArea.getText().trim();
         String to = toTextArea.getText().trim();
         try {
-            dataManager = new DataManager(path, skip, fileNames, from, to);
+        	dataManager= new DataManager(path, skip, fileNames, from, to);
             dataManager.parse();
         } catch (FromToParseException ftpe) {
             MessageDialog.openError(shell, PARSE_ERROR, COUNT_OF_TOKENS_DOESNT_MUTCH);
@@ -378,9 +340,9 @@ public class MainWindow {
         setTextArea(from, to);
     }
 
-    private String replaceToken(StyledText fromTextArea2, StyledText toTextArea2, String from_exp, String to_exp) {
-        String stringChanged = fromTextArea2.getText().trim();
-        String stringChecked = toTextArea2.getText().trim();
+    private String replaceToken(Text textAreaChange, Text textAreaCheck, String from_exp, String to_exp) {
+        String stringChanged = textAreaChange.getText().trim();
+        String stringChecked = textAreaCheck.getText().trim();
         String lineSeparator = System.lineSeparator();
         if (stringChanged.isEmpty() && stringChecked.isEmpty()) {
             return "";
