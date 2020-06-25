@@ -185,7 +185,7 @@ public class MainWindow {
 		initButton(dataCompoiste);
 	}
 
-	public static void addDefaultContextMenu(final StyledText control) {
+	private static void addDefaultContextMenu(final StyledText control) {
 		Menu menu = new Menu(control);
 		MenuItem item = new MenuItem(menu, SWT.PUSH);
 		item.setText("Cut");
