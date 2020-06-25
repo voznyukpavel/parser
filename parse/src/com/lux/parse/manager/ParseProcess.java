@@ -88,6 +88,7 @@ class ParseProcess {
 			int lsize = waysLocal.size();
 			for (int j = 0; j < lsize; j++) {
 				LinkedList<File> files = waysLocal.get(j);
+				if(files!=null) {
 				for (int k = 0; k < files.size(); k++) {
 					Path path = files.get(k).toPath();
 					if (i == 0) {
@@ -96,6 +97,7 @@ class ParseProcess {
 						replace(path, from[j], to[j], directories[i], directories[i - 1]);
 					}
 					//System.out.println();
+				}
 				}
 			}
 		}
