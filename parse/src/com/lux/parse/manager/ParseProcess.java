@@ -2,6 +2,7 @@ package com.lux.parse.manager;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -9,6 +10,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.lux.parse.exceptions.FromToParseException;
 import com.lux.parse.util.ParserExpressionConstants;
@@ -49,7 +53,7 @@ class ParseProcess {
 	private void start(String from, String to) throws FromToParseException, IOException {
 		validationFromTo(from, to);
 		from = deleteSpaces(from);
-		to = deleteSpaces(to);
+		//to = deleteSpaces(to);
 		String[][] splitedFrom = split(from);
 		String[][] splitedTo = split(to);
 		parse(splitedFrom, splitedTo);
@@ -91,6 +95,7 @@ class ParseProcess {
 				if(files!=null) {
 				for (int k = 0; k < files.size(); k++) {
 					Path path = files.get(k).toPath();
+					deleteEmtyLines(path);
 					if (i == 0) {
 						replace(path, from[j], to[j], directories[i], "");
 					} else {
@@ -103,7 +108,34 @@ class ParseProcess {
 		}
 	}
 
-	private void replace(Path path, String[] from, String[] to, String curentDirectory, String prevDerectory)
+	private void deleteEmtyLines(Path path) {
+	    Scanner file;
+      PrintWriter writer;
+      File curentFile=path.toFile();
+      File temp = new File(path.toString()+"temp");
+      try {
+
+          file = new Scanner(curentFile);
+          writer = new PrintWriter(temp);
+
+          while (file.hasNext()) {
+              String line = file.nextLine();
+              if (!line.trim().strip().isEmpty()) {
+                  writer.write(line);
+                  writer.write(System.lineSeparator());
+              }
+          }
+          file.close();
+          writer.close();
+          curentFile.delete();
+          temp.renameTo(curentFile);
+          
+      } catch (IOException ex) {
+          Logger.getLogger(ParseProcess.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+
+    private void replace(Path path, String[] from, String[] to, String curentDirectory, String prevDerectory)
 			throws IOException {
 		String content = new String(Files.readAllBytes(path), CHARSET);
 		for (int i = 0; i < from.length; i++) {
@@ -120,7 +152,7 @@ class ParseProcess {
 				to[i] = to[i].replaceFirst(NEXT_LINE, "");
 			}
 			to[i] = to[i].replaceAll(NEXT_LINE_LAST, "");
-			to[i] = to[i].strip();
+			//to[i] = to[i].strip();
 			//System.out.println();
 			content = replace(from[i], to[i], content);
 		}
@@ -128,8 +160,8 @@ class ParseProcess {
 	}
 
 	private String replace(String from, String to, String content) {
-		ArrayList<String> valideFrom = splitByNextString(from);
-		ArrayList<String> valideTo = splitByNextString(to);
+		ArrayList<String> valideFrom = splitByNextStringFrom(from);
+		ArrayList<String> valideTo = splitByNextStringTo(to);
 		int sizeFrom = valideFrom.size();
 		int sizeTo = valideTo.size();
 		if (sizeFrom > 1) {
@@ -171,7 +203,7 @@ class ParseProcess {
 			content = getContent(contentArr);
 		} else {
 			from = from.replaceAll(NEXT_LINE, "");
-			if (!from.isEmpty()) {
+			if (!from.trim().isEmpty()) {
 				content = content.replace(from, to);
 			}
 		}
@@ -186,14 +218,14 @@ class ParseProcess {
 		String content;
 		content = "";
 		for (int i = 0; i < contentArr.length; i++) {
-			if (!contentArr[i].isEmpty()) {
+			if (!contentArr[i].strip().trim().isEmpty()) {
 				content += contentArr[i] + LINESEPARATOR;
 			}
 		}
 		return content;
 	}
 
-	private ArrayList<String> splitByNextString(String string) {
+	private ArrayList<String> splitByNextStringFrom(String string) {
 		ArrayList<String> valideFrom = new ArrayList<String>();
 		String stringArr[] = string.split(NEXT_LINE);
 		for (int i = 0; i < stringArr.length; i++) {
@@ -205,6 +237,17 @@ class ParseProcess {
 		}
 		return valideFrom;
 	}
+	
+	 private ArrayList<String> splitByNextStringTo(String string) {
+	     ArrayList<String> valideFrom = new ArrayList<String>();
+	     String stringArr[] = string.split(NEXT_LINE);
+	     for (int i = 0; i < stringArr.length; i++) {
+	       if (!stringArr[i].replaceAll("\t", "").strip().isEmpty()) {
+	         valideFrom.add(stringArr[i]);
+	       }
+	     }
+	     return valideFrom;
+	   }
 
 	private void validationFromTo(String from, String to) throws FromToParseException {
 		if (!getToken(from).equals(getToken(to))) {
