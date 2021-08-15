@@ -447,7 +447,7 @@ public class MainWindow {
 
     private void initShell() {
         display = new Display();
-        shell = new Shell(display);
+        shell = new Shell(display);//
         shell.setText(NAME);
         shell.setMinimumSize(MIN_WINDOW_WIDTH, MIN_WINDOW_HEIGHT);
         shell.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
