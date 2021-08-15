@@ -18,7 +18,7 @@ import org.apache.commons.lang3.ArrayUtils;
  * Provides file`s addresses
  * 
  */
-class AdressesGetter {
+class AddressesGetter {
 
 	private String[] directories;
 	private String[] subDirectories;

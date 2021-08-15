@@ -51,8 +51,8 @@ public class DataManager {
 	 *                              writing to files which must be changed
 	 */
 	public void parse() throws FromToParseException, IOException {
-		AdressesGetter adresses = new AdressesGetter();
-		new ParseProcess(adresses.getAdresses(path, skip, fileNames), adresses.getDirectories(), from, to);
+		AddressesGetter addresses = new AddressesGetter();
+		new ParseProcess(addresses.getAdresses(path, skip, fileNames), addresses.getDirectories(), from, to);
 	}
 
 	/**
