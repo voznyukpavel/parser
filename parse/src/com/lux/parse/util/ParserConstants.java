@@ -5,14 +5,14 @@ package com.lux.parse.util;
  *
  */
 public class ParserConstants {
-	/**
-	 * Path to repo`s list
-	 */
-    public static final String PATH ="path";
+    /**
+     * Path to repo`s list
+     */
+    public static final String PATH = "path";
     /**
      * Repos list which must be skipped
      */
-    public static final String SKIP ="skip";
+    public static final String SKIP = "skip";
     /**
      * Files list which must be changed
      */
