@@ -96,11 +96,11 @@ class ParseProcess {
 				for (int k = 0; k < files.size(); k++) {
 					Path path = files.get(k).toPath();
 					deleteEmtyLines(path);
-					if (i == 0) {
-						replace(path, from[j], to[j], directories[i], "");
-					} else {
-						replace(path, from[j], to[j], directories[i], directories[i - 1]);
-					}
+					//if (i == 0) {
+						replace(path, from[j], to[j], directories[i]);
+					//} else {
+					//	replace(path, from[j], to[j], directories[i], directories[i - 1]);
+					//}
 					//System.out.println();
 				}
 				}
@@ -135,19 +135,21 @@ class ParseProcess {
       }
     }
 
-    private void replace(Path path, String[] from, String[] to, String curentDirectory, String prevDerectory)
+    private void replace(Path path, String[] from, String[] to, String curentDirectory)
 			throws IOException {
 		String content = new String(Files.readAllBytes(path), CHARSET);
 		for (int i = 0; i < from.length; i++) {
 
 			from[i] = from[i].replaceAll(NEXT_LINE_LAST, "").trim();
-			if (prevDerectory.isEmpty()) {
+			String fromTemp=from[i];
+			String toTemp=to[i];
+			//if (prevDerectory.isEmpty()) {
 				from[i] = from[i].replaceAll(ParserExpressionConstants.NAME, curentDirectory);
 				to[i] = to[i].replaceAll(ParserExpressionConstants.NAME, curentDirectory);
-			} else {
-				from[i] = from[i].replaceAll(prevDerectory, curentDirectory);
-				to[i] = to[i].replaceAll(prevDerectory, curentDirectory);
-			}
+			//} else {
+			//	from[i] = from[i].replaceAll(prevDerectory, curentDirectory);
+			//	to[i] = to[i].replaceAll(prevDerectory, curentDirectory);
+			//}
 			if (identEndOfString(to[i])) {
 				to[i] = to[i].replaceFirst(NEXT_LINE, "");
 			}
@@ -155,6 +157,8 @@ class ParseProcess {
 			//to[i] = to[i].strip();
 			//System.out.println();
 			content = replace(from[i], to[i], content);
+	    from[i]=fromTemp;
+	    to[i]=toTemp;
 		}
 		Files.write(path, content.getBytes(CHARSET));
 	}
