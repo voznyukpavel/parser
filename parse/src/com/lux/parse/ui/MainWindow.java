@@ -93,6 +93,7 @@ public class MainWindow {
         SashForm sashForm = new SashForm(dataCompoiste, SWT.VERTICAL | SWT.SMOOTH);
 
         GridData sashGridData = new GridData(GridData.FILL_BOTH);
+        sashForm.setSashWidth(10);
         sashForm.setLayoutData(sashGridData);
 
         Composite filesListComposite = new Composite(sashForm, SWT.FILL);
@@ -137,6 +138,7 @@ public class MainWindow {
         separatorLabel.setLayoutData(lineSeparatorGridData);
 
         SashForm changeSashForm = new SashForm(changeComposite, SWT.HORIZONTAL | SWT.SMOOTH);
+        changeSashForm.setSashWidth(10);
         changeSashForm.setLayoutData(sashGridData);
 
         Composite changeFromComposite = new Composite(changeSashForm, SWT.NONE);
