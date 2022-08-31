@@ -92,9 +92,13 @@ class ParseProcess {
                 LinkedList<File> files = waysLocal.get(j);
                 if (files != null) {
                     for (int k = 0; k < files.size(); k++) {
-                        Path path = files.get(k).toPath();
-                        deleteEmtyLines(path);
-                        replace(path, from[j], to[j], directories[i]);
+                        if (files.get(k).exists()) {
+                            Path path = files.get(k).toPath();
+                            deleteEmtyLines(path);
+                            replace(path, from[j], to[j], directories[i]);
+                        }else {
+                            files.remove(k);
+                        }
                     }
                 }
             }

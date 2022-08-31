@@ -103,6 +103,7 @@ class AddressesGetter {
         }
         for (int i = 0; i < directories.length; i++) {
             LinkedHashMap<Integer, LinkedList<File>> waysLocal = new LinkedHashMap<Integer, LinkedList<File>>();
+            int index =0;
             for (int j = 0; j < subDirectories.length; j++) {
                 String temp = subDirectories[j].replaceAll(ParserExpressionConstants.NAME, directories[i]);
                 if (temp.startsWith("..")) {
@@ -111,11 +112,11 @@ class AddressesGetter {
                     waysLocal.put(j, fileAsList);
                 } else {
                     File file = new File(path + directories[i] + backSlash + temp);
-                    if (file.exists()) {
+                    //if (file.exists()) {
                         LinkedList<File> fileAsList = new LinkedList<File>();
                         fileAsList.add(file);
                         waysLocal.put(j, fileAsList);
-                    }
+                    //}
                 }
             }
             ways.add(waysLocal);
